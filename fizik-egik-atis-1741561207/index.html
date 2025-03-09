@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fizik: Eğik Atış Hareketi (Projectile Motion)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #1d4ed8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--gray-50);
+      color: var(--gray-800);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      animation: fadeIn 1s ease-out;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-dark);
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: var(--gray-800);
+      opacity: 0.8;
+    }
+    
+    p {
+      margin-bottom: 1rem;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      animation: slideUp 0.5s ease-out forwards;
+    }
+    
+    .simulation-container {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      background: #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    
+    #simulation {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    
+    #ground {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 50px;
+      background-color: #15803d;
+    }
+    
+    #ball {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #ef4444;
+      bottom: 50px;
+      left: 50px;
+    }
+    
+    #trajectory {
+      position: absolute;
+      bottom: 50px;
+      left: 50px;
+      width: 100%;
+      height: calc(100% - 50px);
+      pointer-events: none;
+    }
+    
+    .control-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .control-group {
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    input[type="range"] {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+    
+    .value-display {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: var(--primary);
+      color: white;
+      padding: 0.625rem 1.25rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+      font-size: 1rem;
+    }
+    
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    
+    .data-table th, .data-table td {
+      padding: 0.75rem;
+      border: 1px solid var(--gray-200);
+      text-align: center;
+    }
+    
+    .data-table th {
+      background-color: var(--gray-100);
+      font-weight: 600;
+    }
+    
+    .data-table tr:nth-child(even) {
+      background-color: var(--gray-50);
+    }
+    
+    .formula {
+      background-color: var(--gray-100);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: 'Courier New', monospace;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    
+    .tab-container {
+      margin-top: 1.5rem;
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--gray-200);
+    }
+    
+    .tab {
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      position: relative;
+      font-weight: 500;
+    }
+    
+    .tab.active {
+      color: var(--primary);
+    }
+    
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--primary);
+    }
+    
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { 
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .highlight {
+      background-color: #fef3c7;
+      padding: 0 0.2rem;
+      border-radius: 0.2rem;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--gray-200);
+      font-size: 0.9rem;
+      color: var(--gray-800);
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Eğik Atış Hareketi</h1>
+      <p class="subtitle">İnteraktif Fizik Simülasyonu</p>
+    </header>
+    
+    <div class="card">
+      <div class="simulation-container">
+        <div id="simulation">
+          <div id="ground"></div>
+          <div id="ball"></div>
+          <canvas id="trajectory"></canvas>
+        </div>
+      </div>
+      
+      <div class="control-panel">
+        <div>
+          <div class="control-group">
+            <label for="angle">Fırlatma Açısı (θ)</label>
+            <input type="range" id="angle" min="0" max="90" value="45" step="1">
+            <div class="value-display">
+              <span>0°</span>
+              <span id="angle-value">45°</span>
+              <span>90°</span>
+            </div>
+          </div>
+          
+          <div class="control-group">
+            <label for="velocity">İlk Hız (v₀)</label>
+            <input type="range" id="velocity" min="10" max="50" value="30" step="1">
+            <div class="value-display">
+              <span>10 m/s</span>
+              <span id="velocity-value">30 m/s</span>
+              <span>50 m/s</span>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <div class="control-group">
+            <label for="gravity">Yerçekimi İvmesi (g)</label>
+            <input type="range" id="gravity" min="1" max="20" value="9.8" step="0.1">
+            <div class="value-display">
+              <span>1 m/s²</span>
+              <span id="gravity-value">9.8 m/s²</span>
+              <span>20 m/s²</span>
+            </div>
+          </div>
+          
+          <div class="control-group">
+            <label for="height">Başlangıç Yüksekliği (h₀)</label>
+            <input type="range" id="height" min="0" max="200" value="0" step="10">
+            <div class="value-display">
+              <span>0 m</span>
+              <span id="height-value">0 m</span>
+              <span>200 m</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="btn-group">
+        <button id="launch-btn" class="btn">Fırlat</button>
+        <button id="reset-btn" class="btn">Sıfırla</button>
+        <button id="show-path-btn" class="btn">İz Göster</button>
+      </div>
+      
+      <div class="tab-container">
+        <div class="tabs">
+          <div class="tab active" data-tab="theory">Teori</div>
+          <div class="tab" data-tab="formulas">Formüller</div>
+          <div class="tab" data-tab="data">Veri Tablosu</div>
+        </div>
+        
+        <div id="theory" class="tab-content active">
+          <h2>Eğik Atış Hareketi Nedir?</h2>
+          <p>Eğik atış hareketi, bir cismin yatay düzlemle belirli bir açı yapacak şekilde fırlatılmasıyla oluşan hareket türüdür. Bu hareket, yatay ve düşey iki hareketin bileşimidir:</p>
+          <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+            <li><strong>Yatay Hareket:</strong> Sabit hız ile yapılan düzgün doğrusal hareket</li>
+            <li><strong>Düşey Hareket:</strong> Yerçekimi etkisiyle yapılan düzgün ivmeli hareket</li>
+          </ul>
+          
+          <p>Eğik atışta, cisim bir parabol çizerek hareket eder. Hareketin temel özellikleri:</p>
+          <ul style="margin-left: 1.5rem;">
+            <li>Cisim maksimum yüksekliğe ulaştığında düşey hızı sıfır olur</li>
+            <li>Yatay hız vektörü değişmez (hava direnci yoksa)</li>
+            <li>Düşey hız vektörü yerçekimi etkisiyle sürekli değişir</li>
+            <li>Cismin izlediği yol bir paraboldür</li>
+          </ul>
+        </div>
+        
+        <div id="formulas" class="tab-content">
+          <h2>Eğik Atış Formülleri</h2>
+          
+          <p>İlk hız bileşenleri:</p>
+          <div class="formula">v₀ₓ = v₀ · cos(θ)</div>
+          <div class="formula">v₀ᵧ = v₀ · sin(θ)</div>
+          
+          <p>Herhangi bir t anında konum:</p>
+          <div class="formula">x(t) = v₀ₓ · t = v₀ · cos(θ) · t</div>
+          <div class="formula">y(t) = h₀ + v₀ᵧ · t - (1/2) · g · t² = h₀ + v₀ · sin(θ) · t - (1/2) · g · t²</div>
+          
+          <p>Maksimum yükseklik:</p>
+          <div class="formula">hₘₐₓ = h₀ + (v₀ · sin(θ))² / (2 · g)</div>
+          
+          <p>Menzil (yatay mesafe):</p>
+          <div class="formula">R = (v₀² · sin(2θ)) / g</div>
+          
+          <p>Havada kalma süresi:</p>
+          <div class="formula">T = (2 · v₀ · sin(θ)) / g</div>
+        </div>
+        
+        <div id="data" class="tab-content">
+          <h2>Simülasyon Verileri</h2>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Parametre</th>
+                <th>Değer</th>
+                <th>Birim</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Fırlatma Açısı (θ)</td>
+                <td id="data-angle">45</td>
+                <td>derece</td>
+              </tr>
+              <tr>
+                <td>İlk Hız (v₀)</td>
+                <td id="data-velocity">30</td>
+                <td>m/s</td>
+              </tr>
+              <tr>
+                <td>Yerçekimi İvmesi (g)</td>
+                <td id="data-gravity">9.8</td>
+                <td>m/s²</td>
+              </tr>
+              <tr>
+                <td>Başlangıç Yüksekliği (h₀)</td>
+                <td id="data-height">0</td>
+                <td>m</td>
+              </tr>
+              <tr>
+                <td>Maksimum Yükseklik (hₘₐₓ)</td>
+                <td id="data-max-height">0</td>
+                <td>m</td>
+              </tr>
+              <tr>
+                <td>Menzil (R)</td>
+                <td id="data-range">0</td>
+                <td>m</td>
+              </tr>
+              <tr>
+                <td>Havada Kalma Süresi (T)</td>
+                <td id="data-time">0</td>
+                <td>s</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>© 2025 Fizik Eğitim Simülasyonları | Eğik Atış Hareketi Demonstrasyonu</p>
+    </footer>
+  </div>
+  
+  <script>
+    // DOM elements
+    const angleSlider = document.getElementById('angle');
+    const velocitySlider = document.getElementById('velocity');
+    const gravitySlider = document.getElementById('gravity');
+    const heightSlider = document.getElementById('height');
+    
+    const angleValue = document.getElementById('angle-value');
+    const velocityValue = document.getElementById('velocity-value');
+    const gravityValue = document.getElementById('gravity-value');
+    const heightValue = document.getElementById('height-value');
+    
+    const dataAngle = document.getElementById('data-angle');
+    const dataVelocity = document.getElementById('data-velocity');
+    const dataGravity = document.getElementById('data-gravity');
+    const dataHeight = document.getElementById('data-height');
+    const dataMaxHeight = document.getElementById('data-max-height');
+    const dataRange = document.getElementById('data-range');
+    const dataTime = document.getElementById('data-time');
+    
+    const ball = document.getElementById('ball');
+    const trajectoryCanvas = document.getElementById('trajectory');
+    const ctx = trajectoryCanvas.getContext('2d');
+    
+    const launchBtn = document.getElementById('launch-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const showPathBtn = document.getElementById('show-path-btn');
+    
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    // Constants and variables
+    let animationId = null;
+    let showPath = false;
+    let simulationStartTime = 0;
+    let simulationScale = 10; // pixels per meter
+    
+    // Set canvas size
+    function resizeCanvas() {
+      trajectoryCanvas.width = trajectoryCanvas.offsetWidth;
+      trajectoryCanvas.height = trajectoryCanvas.offsetHeight;
+    }
+    
+    // Initialize
+    function init() {
+      resizeCanvas();
+      updateValues();
+      calculateProjectileData();
+      resetBall();
+      
+      // Add event listeners to sliders
+      angleSlider.addEventListener('input', updateValues);
+      velocitySlider.addEventListener('input', updateValues);
+      gravitySlider.addEventListener('input', updateValues);
+      heightSlider.addEventListener('input', updateValues);
+      
+      // Add event listeners to buttons
+      launchBtn.addEventListener('click', launchProjectile);
+      resetBtn.addEventListener('click', resetSimulation);
+      showPathBtn.addEventListener('click', togglePath);
+      
+      // Add event listeners to tabs
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          tab.classList.add('active');
+          document.getElementById(tab.dataset.tab).classList.add('active');
+        });
+      });
+      
+      // Handle window resize
+      window.addEventListener('resize', resizeCanvas);
+    }
+    
+    // Update slider values
+    function updateValues() {
+      const angle = angleSlider.value;
+      const velocity = velocitySlider.value;
+      const gravity = gravitySlider.value;
+      const height = heightSlider.value;
+      
+      angleValue.textContent = `${angle}°`;
+      velocityValue.textContent = `${velocity} m/s`;
+      gravityValue.textContent = `${gravity} m/s²`;
+      heightValue.textContent = `${height} m`;
+      
+      dataAngle.textContent = angle;
+      dataVelocity.textContent = velocity;
+      dataGravity.textContent = gravity;
+      dataHeight.textContent = height;
+      
+      // Update ball position based on height
+      const groundHeight = 50; // height of ground in pixels
+      const startHeight = parseInt(height) / simulationScale;
+      ball.style.bottom = (groundHeight + startHeight) + 'px';
+      
+      calculateProjectileData();
+      
+      if (showPath) {
+        drawTrajectory();
+      }
+    }
+    
+    // Calculate projectile motion data
+    function calculateProjectileData() {
+      const angle = angleSlider.value * (Math.PI / 180); // convert to radians
+      const velocity = parseFloat(velocitySlider.value);
+      const gravity = parseFloat(gravitySlider.value);
+      const height = parseFloat(heightSlider.value);
+      
+      // Calculate maximum height
+      const v0y = velocity * Math.sin(angle);
+      const maxHeight = height + (v0y * v0y) / (2 * gravity);
+      dataMaxHeight.textContent = maxHeight.toFixed(2);
+      
+      // Calculate range (horizontal distance)
+      const v0x = velocity * Math.cos(angle);
+      
+      // Time to reach ground from height h
+      const timeOfFlight = (v0y + Math.sqrt(v0y * v0y + 2 * gravity * height)) / gravity;
+      
+      // Range
+      const range = v0x * timeOfFlight;
+      dataRange.textContent = range.toFixed(2);
+      
+      // Time of flight
+      dataTime.textContent = timeOfFlight.toFixed(2);
+      
+      return {
+        v0x,
+        v0y,
+        maxHeight,
+        range,
+        timeOfFlight
+      };
+    }
+    
+    // Draw trajectory path
+    function drawTrajectory() {
+      const angle = angleSlider.value * (Math.PI / 180);
+      const velocity = parseFloat(velocitySlider.value);
+      const gravity = parseFloat(gravitySlider.value);
+      const height = parseFloat(heightSlider.value);
+      
+      const v0x = velocity * Math.cos(angle);
+      const v0y = velocity * Math.sin(angle);
+      
+      const { timeOfFlight } = calculateProjectileData();
+      
+      ctx.clearRect(0, 0, trajectoryCanvas.width, trajectoryCanvas.height);
+      ctx.beginPath();
+      
+      // Start from the ball position
+      const startY = trajectoryCanvas.height - (50 + height / simulationScale);
+      
+      for (let t = 0; t <= timeOfFlight; t += 0.02) {
+        const x = v0x * t * simulationScale;
+        const y = height + v0y * t - 0.5 * gravity * t * t;
+        const canvasY = trajectoryCanvas.height - (50 + y / simulationScale);
+        
+        if (t === 0) {
+          ctx.moveTo(50, canvasY);
+        } else {
+          ctx.lineTo(50 + x, canvasY);
+        }
+      }
+      
+      ctx.strokeStyle = 'rgba(220, 38, 38, 0.5)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    
+    // Launch the projectile
+    function launchProjectile() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      
+      resetBall();
+      const data = calculateProjectileData();
+      simulationStartTime = performance.now();
+      
+      // Clear canvas if not showing path
+      if (!showPath) {
+        ctx.clearRect(0, 0, trajectoryCanvas.width, trajectoryCanvas.height);
+      }
+      
+      // Start animation
+      animateProjectile(data);
+    }
+    
+    // Animate the projectile
+    function animateProjectile(data) {
+      const angle = angleSlider.value * (Math.PI / 180);
+      const velocity = parseFloat(velocitySlider.value);
+      const gravity = parseFloat(gravitySlider.value);
+      const initialHeight = parseFloat(heightSlider.value);
+      
+      const currentTime = (performance.now() - simulationStartTime) / 1000;
+      
+      if (currentTime > data.timeOfFlight) {
+        return; // Animation complete
+      }
+      
+      // Calculate current position
+      const x = data.v0x * currentTime;
+      const y = initialHeight + data.v0y * currentTime - 0.5 * gravity * currentTime * currentTime;
+      
+      // Update ball position
+      ball.style.left = (50 + x * simulationScale) + 'px';
+      ball.style.bottom = (50 + y / simulationScale) + 'px';
+      
+      // Draw point on trajectory if showing path
+      if (showPath) {
+        ctx.beginPath();
+        ctx.arc(50 + x * simulationScale, trajectoryCanvas.height - (50 + y / simulationScale), 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.7)';
+        ctx.fill();
+      }
+      
+      // Continue animation
+      animationId = requestAnimationFrame(() => animateProjectile(data));
+    }
+    
+    // Reset the simulation
+    function resetSimulation() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      
+      resetBall();
+      ctx.clearRect(0, 0, trajectoryCanvas.width, trajectoryCanvas.height);
+      
+      if (showPath) {
+        drawTrajectory();
+      }
+    }
+    
+    // Reset ball position
+    function resetBall() {
+      const height = parseFloat(heightSlider.value);
+      ball.style.left = '50px';
+      ball.style.bottom = (50 + height / simulationScale) + 'px';
+    }
+    
+    // Toggle trajectory path
+    function togglePath() {
+      showPath = !showPath;
+      showPathBtn.textContent = showPath ? 'İzi Gizle' : 'İzi Göster';
+      
+      if (showPath) {
+        drawTrajectory();
+      } else {
+        ctx.clearRect(0, 0, trajectoryCanvas.width, trajectoryCanvas.height);
+      }
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
