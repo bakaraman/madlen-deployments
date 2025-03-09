@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Pendulum Demo</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f0f8ff;
+      color: #333;
+    }
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .pendulum-container {
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+    .pendulum {
+      width: 20px;
+      height: 200px;
+      background-color: #95a5a6;
+      position: absolute;
+      top: 0;
+      transform-origin: top center;
+      animation: swing 2s infinite ease-in-out;
+    }
+    .bob {
+      width: 40px;
+      height: 40px;
+      background-color: #e74c3c;
+      border-radius: 50%;
+      position: absolute;
+      bottom: -20px;
+      left: -10px;
+    }
+    .formula {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    @keyframes swing {
+      0% { transform: rotate(30deg); }
+      50% { transform: rotate(-30deg); }
+      100% { transform: rotate(30deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Pendulum Physics</h1>
+  
+  <div class="pendulum-container">
+    <div class="pendulum">
+      <div class="bob"></div>
+    </div>
+  </div>
+  
+  <div class="formula">
+    <h2>Pendulum Period Formula</h2>
+    <p>The period of a simple pendulum is given by:</p>
+    <p style="font-size: 1.2em; text-align: center;"><strong>T = 2π √(L/g)</strong></p>
+    <p>Where:</p>
+    <ul>
+      <li><strong>T</strong> is the period (time for one complete oscillation)</li>
+      <li><strong>L</strong> is the length of the pendulum</li>
+      <li><strong>g</strong> is the acceleration due to gravity (9.8 m/s²)</li>
+    </ul>
+  </div>
+</body>
+</html>
