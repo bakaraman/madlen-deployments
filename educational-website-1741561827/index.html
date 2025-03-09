@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Platform</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background: #5cb85c;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: 3px solid #444;
+        }
+
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        header ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+
+        header #branding {
+            float: left;
+        }
+
+        header #branding h1 {
+            margin: 0;
+        }
+
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+
+        header .highlight, header .current a {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        header a:hover {
+            color: #c0392b;
+        }
+
+        /* Showcase Styles */
+        #showcase {
+            min-height: 400px;
+            background: url('showcase.jpg') no-repeat 0 -400px; /* Replace 'showcase.jpg' with a placeholder or remove */
+            text-align: center;
+            color: #fff;
+        }
+
+        #showcase h1 {
+            margin-top: 100px;
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        #showcase p {
+            font-size: 20px;
+        }
+
+        /* Newsletter Styles */
+        #newsletter {
+            padding: 15px;
+            color: #fff;
+            background: #35424a;
+        }
+
+        #newsletter h1 {
+            float: left;
+        }
+
+        #newsletter form {
+            float: right;
+            margin-top: 15px;
+        }
+
+        #newsletter input[type="email"] {
+            padding: 4px;
+            height: 25px;
+            width: 250px;
+        }
+
+        /* Boxes Styles */
+        #boxes {
+            margin-top: 20px;
+        }
+
+        #boxes .box {
+            float: left;
+            width: 30%;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #boxes .box img {
+            width: 90px;
+        }
+
+        /* Sidebar Styles */
+        aside#sidebar {
+            float: right;
+            width: 30%;
+            margin-top: 10px;
+            padding: 10px;
+        }
+
+        aside#sidebar .quote input, aside#sidebar .quote textarea {
+            width: 90%;
+            padding: 5px;
+        }
+
+        /* Main Styles */
+        article#main-col {
+            float: left;
+            width: 65%;
+        }
+
+        /* Services Styles */
+        ul#services li {
+            list-style: none;
+            padding: 20px;
+            border: #ccc solid 1px;
+            margin-bottom: 5px;
+            background: #e6e6e6;
+        }
+
+        /* Footer Styles */
+        footer {
+            padding: 20px;
+            margin-top: 20px;
+            color: #fff;
+            background-color: #5cb85c;
+            text-align: center;
+        }
+
+        /* Media Queries */
+        @media(max-width: 768px) {
+            header #branding,
+            header nav,
+            header nav li,
+            #newsletter h1,
+            #newsletter form,
+            #boxes .box,
+            aside#sidebar,
+            article#main-col {
+                float: none;
+                text-align: center;
+                width: 100%;
+            }
+
+            header {
+                padding-bottom: 20px;
+            }
+
+            #showcase h1 {
+                margin-top: 40px;
+            }
+
+            #newsletter form {
+                margin-top: 0;
+            }
+        }
+
+        /* Course Listing Styles */
+        .course-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .course-list li {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .course-list h3 {
+            color: #337ab7;
+        }
+
+        /* Contact Form Styles */
+        .contact-form {
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+        }
+
+        .contact-form button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .contact-form button:hover {
+            background-color: #449d44;
+        }
+
+        /* Collapsible Section Styles */
+        .collapsible {
+            background-color: #777;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .active, .collapsible:hover {
+            background-color: #555;
+        }
+
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1><span class="highlight">Educational</span> Platform</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="current"><a href="index.html">Home</a></li>
+                    <li><a href="courses.html">Courses</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Showcase Section -->
+    <section id="showcase">
+        <div class="container">
+            <h1>Learn Something New Today!</h1>
+            <p>Explore our wide range of courses designed to help you achieve your goals.</p>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section id="newsletter">
+        <div class="container">
+            <h1>Subscribe to Our Newsletter</h1>
+            <form>
+                <input type="email" placeholder="Enter Email...">
+                <button type="submit" class="button_1">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Boxes Section -->
+    <section id="boxes">
+        <div class="container">
+            <div class="box">
+                <h3>Interactive Learning</h3>
+                <p>Engage with dynamic content and hands-on activities.</p>
+            </div>
+            <div class="box">
+                <h3>Expert Instructors</h3>
+                <p>Learn from industry professionals and experienced educators.</p>
+            </div>
+            <div class="box">
+                <h3>Flexible Schedule</h3>
+                <p>Study at your own pace and on your own time.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <article id="main-col">
+            <h1 class="page-title">Featured Course</h1>
+            <ul id="services">
+                <li>
+                    <h3>Introduction to Programming</h3>
+                    <p>Learn the fundamentals of programming with Python. This course covers basic syntax, data structures, and algorithms.</p>
+                    <p>Price: $99</p>
+                </li>
+            </ul>
+        </article>
+
+        <aside id="sidebar">
+            <div class="quote">
+                <h3>Get a Free Consultation</h3>
+                <form>
+                    <div>
+                        <label>Name</label><br>
+                        <input type="text" placeholder="Name">
+                    </div>
+                    <div>
+                        <label>Email</label><br>
+                        <input type="email" placeholder="Email Address">
+                    </div>
+                    <div>
+                        <label>Message</label><br>
+                        <textarea placeholder="Message"></textarea>
+                    </div>
+                    <button class="button_1" type="submit">Send</button>
+                </form>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Course Listing Page -->
+    <div class="container">
+        <article id="main-col">
+            <h1 class="page-title">Available Courses</h1>
+            <ul class="course-list">
+                <li>
+                    <h3>Web Development Fundamentals</h3>
+                    <p>Learn the basics of HTML, CSS, and JavaScript to build interactive websites.</p>
+                    <p>Instructor: Jane Smith</p>
+                </li>
+                <li>
+                    <h3>Data Science Essentials</h3>
+                    <p>Explore the core concepts of data science, including data analysis, machine learning, and visualization.</p>
+                    <p>Instructor: Michael Johnson</p>
+                </li>
+                <li>
+                    <h3>Digital Marketing Strategies</h3>
+                    <p>Discover effective digital marketing strategies to grow your online presence and reach your target audience.</p>
+                    <p>Instructor: Emily Davis</p>
+                </li>
+            </ul>
+        </article>
+    </div>
+
+    <!-- Contact Page -->
+    <div class="container">
+        <article id="main-col">
+            <h1 class="page-title">Contact Me</h1>
+            <div class="contact-form">
+                <form>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </article>
+    </div>
+
+    <!-- Collapsible Section Example -->
+    <div class="container">
+        <button type="button" class="collapsible">Open for a Quick Quiz!</button>
+        <div class="content">
+            <p>What is the capital of France?</p>
+            <input type="text" id="quizAnswer" placeholder="Your Answer">
+            <button onclick="checkAnswer()">Check Answer</button>
+            <p id="result"></p>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>Educational Platform, Copyright &copy; 2025</p>
+    </footer>
+
+    <script>
+        // Collapsible section script
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+
+        // Quiz answer checking function
+        function checkAnswer() {
+            var answer = document.getElementById("quizAnswer").value;
+            var result = document.getElementById("result");
+            if (answer.toLowerCase() === "paris") {
+                result.textContent = "Correct!";
+                result.style.color = "green";
+            } else {
+                result.textContent = "Incorrect. Try again!";
+                result.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
