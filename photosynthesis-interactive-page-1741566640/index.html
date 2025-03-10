@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photosynthesis: An Interactive Journey</title>
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --primary: #4CAF50; /* Green */
+            --primary-dark: #388E3C;
+            --secondary: #FFC107; /* Amber */
+            --accent: #795548;   /* Brown */
+            --light: #F1F8E9;
+            --dark: #212121;
+            --success: #43A047;
+            --info: #03A9F4;
+            --warning: #FFEB3B;
+            --danger: #F44336;
+            --bg-gradient: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --border-radius: 8px;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--bg-gradient);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Header and Navigation */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            padding: 0 20px;
+            font-size: 2.2rem;
+            text-shadow: var(--text-shadow);
+            text-align: center;
+        }
+
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            background-color: var(--light);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            background-color: transparent;
+            border: none;
+            padding: 15px 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark);
+            transition: var(--transition);
+            position: relative;
+            flex: 1;
+            text-align: center;
+        }
+
+        .tab-button:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        /* Page Content */
+        .page-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .page-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Cards and Sections */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            color: var(--primary-dark);
+            margin-top: 0;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin-top: 20px;
+            font-size: 1.4rem;
+        }
+
+        p {
+            margin: 15px 0;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* Interactive Elements */
+        .interactive-section {
+            margin-top: 40px;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-reset {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Simulation Area */
+        .simulation-container {
+            position: relative;
+            height: 300px;
+            background-color: #f1f5f9;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .leaf {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: var(--primary);
+            border-radius: 50% 20%;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+            animation: sway 5s infinite ease-in-out;
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: translateY(-50%) rotate(0deg); }
+            50% { transform: translateY(-50%) rotate(10deg); }
+        }
+
+        .sun {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            top: 10%;
+            right: 10%;
+            box-shadow: 0 0 30px var(--secondary);
+            animation: pulse 4s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .water {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #03A9F4;
+            clip-path: wave(5%, 50px);
+            animation: waveAnimation 8s linear infinite;
+        }
+
+        @keyframes waveAnimation {
+            0% { clip-path: wave(5%, 50px); }
+            100% { clip-path: wave(55%, 50px); }
+        }
+
+        @function wave($percent, $height) {
+            $w: percentage(1/$percent);
+            $h: $height;
+            @return polygon(
+                0%   0%,
+                ($w*1)  $h,
+                ($w*2)  0%,
+                ($w*3)  $h,
+                ($w*4)  0%,
+                ($w*5)  $h,
+                ($w*6)  0%,
+                ($w*7)  $h,
+                ($w*8)  0%,
+                ($w*9)  $h,
+                ($w*10) 0%,
+                100% 0%,
+                100% 100%,
+                0% 100%
+            );
+        }
+
+        /* Quiz Styles */
+        .quiz-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-dark);
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-option {
+            padding: 12px 15px;
+            background-color: var(--light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quiz-option:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .quiz-option.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .quiz-option.correct {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .quiz-option.incorrect {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .quiz-feedback {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+            display: none;
+        }
+
+        .quiz-feedback.success {
+            background-color: rgba(67, 160, 71, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+            display: block;
+        }
+
+        .quiz-feedback.error {
+            background-color: rgba(244, 67, 54, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            display: block;
+        }
+
+        /* Drag and Drop */
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .drag-source {
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: var(--border-radius);
+            cursor: grab;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .drag-source:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .drag-source.dragging {
+            opacity: 0.5;
+        }
+
+        .drop-target {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: var(--border-radius);
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
+            transition: var(--transition);
+        }
+
+        .drop-target.dragover {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-color: var(--primary);
+        }
+
+        .drop-item {
+            padding: 10px 15px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: grab;
+            margin-bottom: 5px;
+        }
+
+        /* Collapsible Sections */
+        .collapsible {
+            background-color: var(--light);
+            color: var(--dark);
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: var(--primary);
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+            font-size: 1.4rem;
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .collapsible-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: white;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        .collapsible-inner {
+            padding: 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .tab-button {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .simulation-container {
+                height: 200px;
+            }
+
+            .drag-container {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .tab-button {
+                padding: 10px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Photosynthesis: An Interactive Journey</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" data-target="definition-page">Definition</button>
+            <button class="tab-button" data-target="stages-page">Stages & Process</button>
+            <button class="tab-button" data-target="interactive-page">Interactive Quiz</button>
+        </div>
+
+        <!-- Definition Page -->
+        <div id="definition-page" class="page-content active">
+            <div class="card">
+                <h2>What is Photosynthesis?</h2>
+                <p>
+                    Photosynthesis is the remarkable process by which plants, algae, and some bacteria convert light energy into chemical energy, which is then used to fuel cellular activities. It is arguably the most important biochemical pathway on Earth, serving as the foundation of most food webs and playing a vital role in maintaining the Earth's atmosphere and climate.
+                </p>
+
+                <h3>Importance of Photosynthesis</h3>
+                <p>
+                    Photosynthesis is not just a process for plants to make food; it is essential for life as we know it. Here's why:
+                </p>
+                <ul>
+                    <li>
+                        <strong>Primary Energy Source:</strong> It's the primary way energy enters almost all ecosystems. Plants, as primary producers, form the base of the food chain, supporting all higher trophic levels.
+                    </li>
+                    <li>
+                        <strong>Oxygen Production:</strong> Photosynthesis is responsible for the production of nearly all the oxygen in Earth's atmosphere. This oxygen is essential for the respiration of most living organisms, including humans.
+                    </li>
+                    <li>
+                        <strong>Carbon Cycle Regulation:</strong> It removes carbon dioxide (CO<sub>2</sub>) from the atmosphere and converts it into organic compounds. This helps regulate Earth's climate by reducing the greenhouse effect caused by excess CO<sub>2</sub>.
+                    </li>
+                </ul>
+
+                <h3>Photosynthesis and the Environment</h3>
+                <p>
+                    The health of our planet is intricately linked to the efficiency of photosynthesis. Forests, oceans, and other ecosystems rich in photosynthetic organisms act as carbon sinks, absorbing more CO<sub>2</sub> than they release. However, deforestation, pollution, and climate change are disrupting these ecosystems and reducing their photosynthetic capacity.
+                </p>
+
+                <h3>The Carbon Cycle</h3>
+                <p>
+                    Photosynthesis is a key component of the carbon cycle, a natural process that moves carbon atoms between the atmosphere, land, oceans, and living organisms. Here's how it works:
+                </p>
+                <ul>
+                    <li>
+                        <strong>Carbon Fixation:</strong> Plants absorb CO<sub>2</sub> from the atmosphere during photosynthesis, converting it into glucose and other organic molecules.
+                    </li>
+                    <li>
+                        <strong>Consumption:</strong> Animals consume plants (or other animals that have consumed plants), using the carbon-based compounds for energy and growth.
+                    </li>
+                    <li>
+                        <strong>Decomposition:</strong> When plants and animals die, decomposers (bacteria and fungi) break down their organic matter, releasing CO<sub>2</sub> back into the atmosphere.
+                    </li>
+                    <li>
+                        <strong>Respiration:</strong> Both plants and animals release CO<sub>2</sub> into the atmosphere through respiration.
+                    </li>
+                </ul>
+
+                <p>
+                    Maintaining a balance in the carbon cycle is crucial for regulating Earth's climate. By understanding photosynthesis, we can better appreciate its importance and work towards preserving the ecosystems that support it.
+                </p>
+            </div>
+        </div>
+
+        <!-- Stages Page -->
+        <div id="stages-page" class="page-content">
+            <div class="card">
+                <h2>Stages of Photosynthesis</h2>
+                <p>Photosynthesis occurs in two main stages, each with its own set of reactions.</p>
+
+                <button class="collapsible">Light-Dependent Reactions</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h3>Overview</h3>
+                        <p>The light-dependent reactions occur in the thylakoid membranes inside chloroplasts. They convert light energy into chemical energy in the form of ATP and NADPH.</p>
+                        <h3>Process</h3>
+                        <ul>
+                            <li><strong>Light Absorption:</strong> Chlorophyll absorbs light energy.</li>
+                            <li><strong>Water Splitting:</strong> Water molecules are split, releasing electrons, hydrogen ions, and oxygen.</li>
+                            <li><strong>Electron Transport Chain:</strong> Electrons move through a series of proteins, generating ATP and NADPH.</li>
+                            <li><strong>Oxygen Production:</strong> Oxygen is released as a byproduct.</li>
+                        </ul>
+
+                        <div class="simulation-container">
+                            <div class="sun"></div>
+                            <div class="leaf"></div>
+                            <div class="water"></div>
+                        </div>
+                        <p>Animation of light-dependent stage: Sunlight is captured and water is split.</p>
+                    </div>
+                </div>
+
+                <button class="collapsible">Light-Independent Reactions (Calvin Cycle)</button>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h3>Overview</h3>
+                        <p>The light-independent reactions (Calvin Cycle) take place in the stroma of the chloroplasts. They use the ATP and NADPH produced in the light-dependent reactions to convert carbon dioxide into glucose.</p>
+                        <h3>Process</h3>
+                        <ul>
+                            <li><strong>Carbon Fixation:</strong> Carbon dioxide is combined with RuBP (a five-carbon molecule).</li>
+                            <li><strong>Reduction:</strong> ATP and NADPH are used to convert the resulting molecule into glucose.</li>
+                            <li><strong>Regeneration:</strong> RuBP is regenerated to continue the cycle.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Reactants and Products Summary</h3>
+                <ul>
+                    <li><strong>Reactants:</strong> Carbon Dioxide (CO<sub>2</sub>), Water (H<sub>2</sub>O), Sunlight</li>
+                    <li><strong>Products:</strong> Glucose (C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>), Oxygen (O<sub>2</sub>)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Interactive Page -->
+        <div id="interactive-page" class="page-content">
+            <div class="card">
+                <h2>Photosynthesis Quiz</h2>
+                <p>Test your understanding of photosynthesis with this interactive quiz!</p>
+
+                <div class="quiz-container">
+                    <div class="quiz-question">1. What is the primary purpose of photosynthesis?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" data-correct="true">To convert light energy into chemical energy.</div>
+                        <div class="quiz-option">To absorb water from the soil.</div>
+                        <div class="quiz-option">To release carbon dioxide into the atmosphere.</div>
+                        <div class="quiz-option">To produce oxygen for animals.</div>
+                    </div>
+
+                    <div class="quiz-question">2. In which organelle does photosynthesis take place?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option">Mitochondria</div>
+                        <div class="quiz-option" data-correct="true">Chloroplast</div>
+                        <div class="quiz-option">Nucleus</div>
+                        <div class="quiz-option">Endoplasmic Reticulum</div>
+                    </div>
+
+                    <div class="quiz-question">3. What are the reactants of photosynthesis?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option">Glucose and Oxygen</div>
+                        <div class="quiz-option" data-correct="true">Carbon Dioxide and Water</div>
+                        <div class="quiz-option">Nitrogen and Sunlight</div>
+                        <div class="quiz-option">Sugar and Water</div>
+                    </div>
+
+                    <div class="quiz-question">4. What gas is released during photosynthesis?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option">Carbon Dioxide</div>
+                        <div class="quiz-option" data-correct="true">Oxygen</div>
+                        <div class="quiz-option">Nitrogen</div>
+                        <div class="quiz-option">Methane</div>
+                    </div>
+
+                    <div class="quiz-question">5. Which stage of photosynthesis uses ATP and NADPH to convert carbon dioxide to glucose?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option">Light-Dependent Reactions</div>
+                        <div class="quiz-option" data-correct="true">Light-Independent Reactions (Calvin Cycle)</div>
+                        <div class="quiz-option">Electron Transport Chain</div>
+                        <div class="quiz-option">Glycolysis</div>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button id="submitQuizBtn" class="btn btn-primary">Submit Answers</button>
+                        <button id="resetQuizBtn" class="btn btn-reset">Reset Quiz</button>
+                    </div>
+
+                    <div id="quizFeedback" class="quiz-feedback"></div>
+                    <div id="quizScore" style="margin-top: 15px; font-weight: 600; display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Navigation System
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize variables to track state
+            let currentTab = 'definition-page';
+
+            // Tab navigation functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+
+                    // Hide all pages and deactivate all tabs
+                    document.querySelectorAll('.page-content').forEach(page => {
+                        page.classList.remove('active');
+                    });
+
+                    tabButtons.forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+
+                    // Show the selected page and activate the tab
+                    document.getElementById(targetId).classList.add('active');
+                    this.classList.add('active');
+
+                    // Update current tab state
+                    currentTab = targetId;
+                });
+            });
+
+            // Collapsible sections functionality
+            const collapsibles = document.querySelectorAll('.collapsible');
+
+            collapsibles.forEach(collapsible => {
+                collapsible.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const content = this.nextElementSibling;
+
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+            });
+
+            // Quiz Functionality
+            const quizOptions = document.querySelectorAll('.quiz-option');
+            const submitQuizBtn = document.getElementById('submitQuizBtn');
+            const resetQuizBtn = document.getElementById('resetQuizBtn');
+            const quizFeedback = document.getElementById('quizFeedback');
+            const quizScore = document.getElementById('quizScore');
+
+            quizOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Deselect other options in the same question group
+                    const questionGroup = this.parentElement;
+                    questionGroup.querySelectorAll('.quiz-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+
+                    // Select this option
+                    this.classList.add('selected');
+                });
+            });
+
+            submitQuizBtn.addEventListener('click', function() {
+                // Check answers
+                const questions = document.querySelectorAll('.quiz-question');
+                let correct = 0;
+                let answered = 0;
+
+                questions.forEach(question => {
+                    const options = question.nextElementSibling.querySelectorAll('.quiz-option');
+                    const selectedOption = question.nextElementSibling.querySelector('.selected');
+
+                    if (selectedOption) {
+                        answered++;
+                        options.forEach(option => {
+                            option.classList.remove('correct', 'incorrect');
+
+                            if (option.classList.contains('selected')) {
+                                if (option.getAttribute('data-correct') === 'true') {
+                                    option.classList.add('correct');
+                                    correct++;
+                                } else {
+                                    option.classList.add('incorrect');
+                                }
+                            } else if (option.getAttribute('data-correct') === 'true') {
+                                option.classList.add('correct');
+                            }
+                        });
+                    }
+                });
+
+                // Display score and feedback
+                if (answered === questions.length) {
+                    const score = Math.round((correct / questions.length) * 100);
+                    quizScore.style.display = 'block';
+                    quizScore.textContent = "Your score: " + correct + " out of " + questions.length + " (" + score + "%)";
+
+                    if (score === 100) {
+                        quizFeedback.textContent = "Perfect! You've mastered Photosynthesis.";
+                        quizFeedback.className = 'quiz-feedback success';
+                    } else if (score >= 80) {
+                        quizFeedback.textContent = "Great job! You have a solid understanding of Photosynthesis.";
+                        quizFeedback.className = 'quiz-feedback success';
+                    } else if (score >= 60) {
+                        quizFeedback.textContent = "Good effort! Review the questions you missed to improve your understanding.";
+                        quizFeedback.className = 'quiz-feedback error';
+                    } else {
+                        quizFeedback.textContent = "You might want to revisit the concepts of Photosynthesis. Review the definition and stages and try again.";
+                        quizFeedback.className = 'quiz-feedback error';
+                    }
+                } else {
+                    quizFeedback.textContent = "Please answer all questions before submitting (" + answered + "/" + questions.length + " answered).";
+                    quizFeedback.className = 'quiz-feedback error';
+                    quizScore.style.display = 'none';
+                }
+            });
+
+            resetQuizBtn.addEventListener('click', function() {
+                // Reset the quiz
+                quizOptions.forEach(option => {
+                    option.classList.remove('selected', 'correct', 'incorrect');
+                });
+
+                quizFeedback.textContent = '';
+                quizFeedback.className = 'quiz-feedback';
+                quizScore.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
